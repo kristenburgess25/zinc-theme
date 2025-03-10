@@ -10,7 +10,7 @@
   - [Scripts](#scripts)
 # Welcome!
 
-Welcome to Elementum’s theme repository! We’re glad you’re here. 😊 Before you get started, please review the rest of this readme so you’re acquainted with our process.
+Welcome to the Zinc theme repository! We’re glad you’re here. 😊 Before you get started, please review the rest of this readme so you’re acquainted with our process.
 
 ## Project Summary & Goals
 
