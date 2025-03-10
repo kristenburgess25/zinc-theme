@@ -1,0 +1,487 @@
+<link rel="stylesheet" href="{{ 'component-card.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'component-article-card.css' | asset_url }}" media="print" onload="this.media='all'">
+
+<link rel="stylesheet" href="{{ 'et_cards.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'et_blog.css' | asset_url }}" media="print" onload="this.media='all'">
+
+<noscript>{{ 'component-card.css' | asset_url | stylesheet_tag }}</noscript>
+<noscript>{{ 'component-article-card.css' | asset_url | stylesheet_tag }}</noscript>
+
+<noscript>{{ 'et_cards.css' | asset_url | stylesheet_tag }}</noscript>
+<noscript>{{ 'et_blog.css' | asset_url | stylesheet_tag }}</noscript>
+
+{%- style -%}
+  .section-{{ section.id }} {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 768px) {
+    .section-{{ section.id }} {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+  
+  @media screen and (min-width: 768px) {
+    .section-{{ section.id }} .blog__posts .blog__post {
+      flex-basis: calc((1/{{ section.settings.columns_desktop }}) * 100%);
+    }
+  }
+
+  {% if section.settings.card_vertical_alignment != settings.content_card_vertical_alignment %}
+    .section-{{ section.id }} .card + .card__content .card__information {
+      justify-self: {{ section.settings.card_vertical_alignment }};
+    }
+
+    .section-{{ section.id }} .card.card--info-hover .card__inner .card__information {
+      align-self: {{ section.settings.card_vertical_alignment }};
+    }
+  {% endif %}
+{%- endstyle -%}
+
+
+{%- liquid
+  assign featured_blog = blog
+  
+  if section.settings.blog != nil
+    assign featured_blog = section.settings.blog
+  endif
+
+  assign posts_displayed = featured_blog.articles_count
+  if section.settings.post_limit <= featured_blog.articles_count
+    assign posts_exceed_limit = true
+    assign posts_displayed = section.settings.post_limit
+  endif
+-%}
+<div class="blog section-{{ section.id }}{% if section.settings.use_foreground %} section--foreground{% endif %} color-scheme color-scheme--{{ section.settings.color_scheme }}">
+  <div class="container">
+      <div class="blog__title-wrapper {{ section.settings.heading_alignment }}">
+        {%- if section.settings.title != blank -%}
+          <h2 id="SectionHeading-{{ section.id }}" class="blog__title h1">{{ section.settings.title | escape }}</h2>
+        {%- endif -%}
+        {%- if featured_blog != blank and section.settings.show_view_all and section.settings.post_limit < featured_blog.articles_count -%}
+          <a href="{{ featured_blog.url }}"
+            class="link underlined-link large-up-hide"
+          >
+            {{ 'sections.featured_blog.view_all' | t }}
+          </a>
+        {%- endif -%}
+  
+        {%- if section.settings.subheading != blank -%}
+          <h3 class="blog__subtitle">{{ section.settings.subheading }}</h3>
+        {%- endif -%}
+  
+        {% if section.settings.subheading != blank and section.settings.tag_links %}
+          <hr class="border-0 border-t-2 border-solid border-scheme-accent" />
+        {% endif %}
+      </div>
+    {% if section.settings.tag_links %}
+      {% liquid
+        assign blogTags = ''
+  
+        for article in featured_blog.articles
+          unless forloop.first
+            assign blogTags = blogTags | append: ','
+          endunless
+  
+          assign articleTags = article.tags | join: ','
+          assign blogTags = blogTags | append: articleTags
+        endfor
+  
+        assign blogTags = blogTags | split: ',' | uniq
+      %}
+      {% if blogTags %}
+        <div class="blog__tag-links">
+          {% for tag in blogTags limit: 8 %}
+            <a href="{{ featured_blog.url }}/tagged/{{ tag }}" alt="Blog posts tagged with {{ tag }}" class="btn secondary">
+              <span class="btn__label">{{ tag }}</span>
+            </a>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endif %}
+    <div class="splide{% if section.settings.desktop_slider %} splide--desktop{% endif %} isolate"
+      data-splide='{ "perPage": 1, "mediaQuery": "min", "breakpoints": { "768": { {% if section.settings.desktop_slider %}"perPage": {{ section.settings.columns_desktop }}{% else %}"destroy": true{% endif %} } } }'
+      aria-labelledby="SectionHeading-{{ section.id }}">
+      {%- if featured_blog != blank and featured_blog.articles_count > 0 -%}
+        <div class="splide__track--container">
+          <div class="splide__track blog__posts--container">
+            <ul id="Slider-{{ section.id }}"
+              class="splide__list blog__posts{% unless section.settings.desktop_slider %} blog__posts--desktop-grid{% endunless %}"
+              role="list"
+            >
+              {% liquid
+                assign articles = featured_blog.articles
+    
+                case section.settings.sort_by
+                  when 'new'
+                    assign articles = articles | sort: 'published_at'
+                  when 'old'
+                    assign articles = articles | sort: 'published_at' | reverse
+                  when 'a-z'
+                    assign articles = articles | sort: 'title'
+                  when 'z-a'
+                    assign articles = articles | sort: 'title' | reverse
+                endcase
+              %}
+              {%- for article in articles limit: section.settings.post_limit -%}
+                <li id="Slide-{{ section.id }}-{{ forloop.index }}" class="splide__slide blog__post">
+                  {% render 'article-card',
+                    blog: featured_blog, 
+                    article: article,
+                    card_color_scheme: section.settings.card_color_scheme,
+                    section_color_scheme: section.settings.color_scheme,
+                    show_image: section.settings.show_image,
+                    media_aspect_ratio: section.settings.image_ratio,
+                    media_fit: section.settings.card_image_fit,
+                    show_date: section.settings.show_date,
+                    show_author: section.settings.show_author,
+                    show_tags: section.settings.show_tags,
+                    show_excerpt: section.settings.show_excerpt,
+                    hover_info: section.settings.card_hover_show_info,
+                    blog_list: false
+                  %}
+                </li>
+              {%- endfor -%}
+            </ul>
+          </div>
+  
+          <div class="splide__arrows">
+            <button class="splide__arrow splide__arrow--prev">
+              {%- render 'icon-arrow-big' -%}
+            </button>
+            <button class="splide__arrow splide__arrow--next">
+              {%- render 'icon-arrow-big' -%}
+            </button>
+          </div>
+        </div>
+  
+        {%- if section.settings.show_view_all and section.settings.post_limit < featured_blog.articles_count -%}
+          <div class="blog__view-all center small-hide medium-hide">
+            <a href="{{ featured_blog.url }}" id="ViewAll-{{ section.id }}" class="blog__button btn secondary" aria-labelledby="ViewAll-{{ section.id }} SectionHeading-{{ section.id }}">
+              <span class="btn__label">
+                {{ 'sections.featured_blog.view_all' | t }}
+              </span>
+            </a>
+          </div>
+        {%- endif -%}
+      {%- else -%}
+        <div class="blog-placeholder">
+          <div class="placeholder media media--landscape">
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+          </div>
+          <div class="blog-placeholder__content">
+            <h2>
+              {{ 'sections.featured_blog.onboarding_title' | t }}
+            </h2>
+            <p class="rte-width">
+              {{ 'sections.featured_blog.onboarding_content' | t }}
+            </p>
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.featured-blog.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "default": "Blog posts",
+      "label": "t:sections.featured-blog.settings.heading.label"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "default": "An optional subheading for describing the types of blog posts that are listed.",
+      "label": "Subheading"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center",
+      "label": "Text alignment"
+    },
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "t:sections.featured-blog.settings.blog.label"
+    },
+    {
+      "type": "select",
+      "id": "sort_by",
+      "label": "Sort posts by",
+      "options": [
+        {
+          "value": "new",
+          "label": "Newest → Oldest"
+        },
+        {
+          "value": "old",
+          "label": "Oldest → Newest"
+        },
+        {
+          "value": "a-z",
+          "label": "Title A → Z"
+        },
+        {
+          "value": "z-a",
+          "label": "Title Z → A"
+        }
+      ],
+      "default": "new"
+    },
+    {
+      "type": "checkbox",
+      "id": "tag_links",
+      "default": false,
+      "label": "Show tag links"
+    },
+    {
+      "type": "range",
+      "id": "post_limit",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 3,
+      "label": "t:sections.featured-blog.settings.post_limit.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 3,
+      "label": "t:sections.featured-blog.settings.columns_desktop.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "desktop_slider",
+      "default": false,
+      "label": "Enable slideshow on desktop",
+      "info": "Blog posts will slide on desktop, like tablet and mobile."
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "options": [
+        {
+          "value": "background-1",
+          "label": "Background 1"
+        },
+        {
+          "value": "background-2",
+          "label": "Background 2"
+        },
+        {
+          "value": "accent-1",
+          "label": "Accent 1"
+        },
+        {
+          "value": "accent-2",
+          "label": "Accent 2"
+        }
+      ],
+      "default": "background-1",
+      "label": "t:sections.all.colors.label",
+      "info": "t:sections.all.colors.has_cards_info"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_foreground",
+      "default": false,
+      "label": "Enable foreground color",
+      "info": "Use foreground color as background color to highlight section from rest of the page."
+    },
+    {
+      "type": "header",
+      "content": "Article Cards"
+    },
+    {
+      "type": "select",
+      "id": "card_color_scheme",
+      "options": [
+        {
+          "value": "default",
+          "label": "Default (theme settings)"
+        },
+        {
+          "value": "match",
+          "label": "Match section"
+        },
+        {
+          "value": "inverse",
+          "label": "Inverse section"
+        }
+      ],
+      "default": "default",
+      "label": "Card color scheme"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_image",
+      "default": true,
+      "label": "t:sections.featured-blog.settings.show_image.label"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        {
+          "value": "auto",
+          "label": "t:settings_schema.global.settings.aspect_ratio.options__1.label"
+        },
+        {
+          "value": "square",
+          "label": "t:settings_schema.global.settings.aspect_ratio.options__2.label"
+        },
+        {
+          "value": "lportrait",
+          "label": "t:settings_schema.global.settings.aspect_ratio.options__3.label"
+        },
+        {
+          "value": "sportrait",
+          "label": "t:settings_schema.global.settings.aspect_ratio.options__4.label"
+        },
+        {
+          "value": "widescreen",
+          "label": "t:settings_schema.global.settings.aspect_ratio.options__5.label"
+        },
+        {
+          "value": "landscape",
+          "label": "t:settings_schema.global.settings.aspect_ratio.options__6.label"
+        }
+      ],
+      "default": "square",
+      "label": "Aspect Ratio"
+    },
+    {
+      "type": "select",
+      "id": "card_image_fit",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Cover"
+        },
+        {
+          "value": "contain",
+          "label": "Contain"
+        }
+      ],
+      "default": "cover",
+      "label": "Image Fit"
+    },
+    {
+      "type": "select",
+      "id": "card_vertical_alignment",
+      "options": [
+        {
+          "value": "start",
+          "label": "t:settings_schema.cards.settings.vertical_alignment.options__1.label"
+        },
+        {
+          "value": "center",
+          "label": "t:settings_schema.cards.settings.vertical_alignment.options__2.label"
+        },
+        {
+          "value": "end",
+          "label": "t:settings_schema.cards.settings.vertical_alignment.options__3.label"
+        }
+      ],
+      "default": "start",
+      "label": "t:settings_schema.cards.settings.vertical_alignment.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "default": true,
+      "label": "t:sections.featured-blog.settings.show_date.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "default": false,
+      "label": "t:sections.featured-blog.settings.show_author.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "default": false,
+      "label": "Show excerpt"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tags",
+      "default": false,
+      "label": "Show tags"
+    },
+    {
+      "type": "checkbox",
+      "id": "card_hover_show_info",
+      "default": false,
+      "label": "Show card info on hover",
+      "info": "When enabled, card information like titles, descriptions and prices will animate over the image area on hover."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "default": false,
+      "label": "t:sections.featured-blog.settings.show_view_all.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.featured-blog.presets.name",
+      "settings": {
+        "blog": "News"
+      }
+    }
+  ]
+}
+{% endschema %}

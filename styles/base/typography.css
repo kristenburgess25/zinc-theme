@@ -1,0 +1,204 @@
+/*
+
+ -/-     ,_    _,_ __   ,_  __,  ,_    /_
+_/__(_/__/_)__(_/_(_/__/ (_(_/(__/_)__/ (__(_/_
+    _/_ /         _/_           /          _/_
+   (/  /         (/            /          (/
+
+*/
+
+.page-title {
+  @apply font-heading text-7xl leading-120;
+}
+
+.title-wrapper,
+.title-wrapper-with-link {
+  & .title {
+    @apply mb-2;
+  }
+}
+
+.h0 {
+  @apply text-h0 leading-120;
+
+  @media screen and (max-width: 767px) {
+    font-size: calc(var(--font-heading0-size) * .8);
+  }
+
+  @media screen and (min-width: 1280px) {
+    font-size: calc(var(--font-heading0-size) * 1.2);
+  }
+}
+
+h1, .h1 {
+  @apply
+    font-heading
+    text-h1
+    leading-120;
+
+  @media screen and (max-width: 767px) {
+    font-size: calc(var(--font-heading1-size) * .8);
+  }
+
+  @media screen and (min-width: 1280px) {
+    font-size: calc(var(--font-heading1-size) * 1.2);
+  }
+}
+
+h2, h3, h4, h5, h6 {
+  @apply font-body;
+}
+
+h2, .h2 {
+  @apply text-h2 leading-120;
+
+  @media screen and (max-width: 767px) {
+    font-size: calc(var(--font-heading2-size) * .8);
+  }
+
+  @media screen and (min-width: 1280px) {
+    font-size: calc(var(--font-heading2-size) * 1.2);
+  }
+}
+
+h3, .h3 {
+  @apply text-h3 leading-130;
+
+  @media screen and (max-width: 767px) {
+    font-size: calc(var(--font-heading3-size) * .8);
+  }
+
+  @media screen and (min-width: 1280px) {
+    font-size: calc(var(--font-heading3-size) * 1.2);
+  }
+}
+
+h4, .h4 {
+  @apply text-h4 leading-130;
+
+  @media screen and (max-width: 767px) {
+    font-size: calc(var(--font-heading4-size) * .8);
+  }
+
+  @media screen and (min-width: 1280px) {
+    font-size: calc(var(--font-heading4-size) * 1.2);
+  }
+}
+
+h5, .h5 {
+  @apply text-h5 leading-140;
+
+  @media screen and (max-width: 767px) {
+    font-size: calc(var(--font-heading5-size) * .8);
+  }
+
+  @media screen and (min-width: 1280px) {
+    font-size: calc(var(--font-heading5-size) * 1.2);
+  }
+}
+
+h6, .h6 {
+  @apply text-h6 leading-140;
+
+  @media screen and (max-width: 767px) {
+    font-size: calc(var(--font-heading6-size) * .8);
+  }
+
+  @media screen and (min-width: 1280px) {
+    font-size: calc(var(--font-heading6-size) * 1.2);
+  }
+}
+
+p,
+.text-body {
+  @apply
+    text-base
+    leading-160;
+
+  &.small {
+    @apply
+      text-sm
+      leading-160;
+  }
+}
+
+.caption {
+  @apply text-xs md:text-base leading-normal;
+
+  &-spaced {
+    @apply text-xs leading-tight uppercase;
+    letter-spacing: .075rem;
+
+    &--medium {
+      @apply text-sm;
+      letter-spacing: .1rem;
+    }
+
+    &--large {
+      @apply text-lg;
+      letter-spacing: .125rem;
+    }
+  }
+
+  &-large {
+    @apply text-base leading-normal;
+  }
+}
+
+.rte {
+  &.subtitle {
+    @apply text-1.375 leading-130;
+  }
+
+  &.body {
+    @apply text-sm leading-normal;
+  }
+
+  h1, h2, h3 {
+    @apply my-8;
+  }
+
+  h4, h5, h6 {
+    @apply my-4;
+  }
+
+  p {
+    @apply my-2
+      text-lg
+      leading-relaxed
+      lg:(text-xl leading-[1.875rem]);
+  }
+
+  a {
+    @apply underline-link;
+  }
+}
+
+.link {
+  @apply
+    text-sm
+    md:text-base
+    lg: text-lg;
+
+  .title-wrapper-with-link & {
+    @apply self-center;
+  }
+}
+
+.underlined-link {
+  @apply
+    underline
+    tracking-[4%];
+
+  &--small {
+    @apply
+      text-sm
+      tracking-[2%];
+  }
+
+  &--big {
+    @apply
+      text-lg
+      tracking-[6%];
+  }
+}

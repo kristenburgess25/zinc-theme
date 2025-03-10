@@ -1,0 +1,205 @@
+/*
+
+  /_      -/--/- _,_ ,__,   ,
+_/_)_(_/__/__/__(_/_/ / (__/_)_
+
+*/
+
+.buttons {
+  @apply flex
+    my-4;
+
+  > .btn {
+    @apply mx-2;
+
+    &:not(:last-child) {
+      @apply <sm:(mr-2);
+    }
+
+    &:only-child {
+      @apply mx-0;
+    }
+  }
+
+  .right & {
+    @apply justify-end;
+  }
+
+  .center & {
+    @apply justify-center;
+  }
+}
+
+.btn {
+  @apply inline-block
+    rounded-button
+    focus:outline-none
+    focus:ring
+    focus:ring-scheme-accent;
+
+  &__label {
+    @apply relative
+      z-1
+      block
+      rounded-button
+      bg-button-bg
+      text-button-fg
+      py-2
+      px-8;
+  }
+
+  &.primary {
+    --button-bg: theme('colors.scheme-bg');
+    --button-fg: theme('colors.scheme-accent');
+  }
+
+  &.secondary {
+    --button-bg: theme('colors.scheme-accent');
+    --button-fg: theme('colors.scheme-bg');
+  }
+
+  &-background-1 {
+    --button-bg: theme('colors.bg1');
+    --button-fg: theme('colors.text');
+  }
+
+  &-background-2 {
+    --button-bg: theme('colors.bg2');
+    --button-fg: theme('colors.bg1');
+  }
+
+  &-accent-1 {
+    --button-bg: theme('colors.accent1');
+    --button-fg: theme('colors.bg1');
+  }
+
+  &-accent-2 {
+    --button-bg: theme('colors.accent2');
+    --button-fg: theme('colors.bg1');
+  }
+
+  &-foreground {
+    --button-bg: theme('colors.scheme-fg');
+    --button-fg: theme('colors.scheme-bg');
+  }
+
+  &-success {
+    --button-bg: theme('colors.success');
+    --button-fg: theme('colors.bg1');
+  }
+
+  &-warning {
+    --button-bg: theme('colors.warning');
+    --button-fg: theme('colors.bg1');
+  }
+
+  &-error {
+    --button-bg: theme('colors.error');
+    --button-fg: theme('colors.bg1');
+  }
+
+  &--small {
+    @apply text-sm;
+
+    & .btn__label {
+      @apply text-sm py-xs px-4;
+    }
+  }
+
+  &--large {
+    @apply text-xl;
+
+    & .btn__label {
+      @apply text-xl py-4;
+    }
+  }
+
+  &--full {
+    @apply w-full;
+  }
+
+  &--1\/2 {
+    @apply w-1/2;
+  }
+
+  &--qty {
+    @apply bg-button-bg
+      text-button-fg
+      self-center
+      leading-0
+      p-3
+      md:p-2
+      relative
+      z-1;
+
+    > svg {
+      @apply h-[.75rem]
+        w-[.75rem]
+        md:(h-4 w-4)
+        relative
+        -z-1;
+    }
+  }
+
+  &.badge {
+    & .btn__label {
+      @apply rounded-badge;
+
+      > svg {
+        height: calc(var(--icon-size) * .75);
+        width: calc(var(--icon-size) * .75);
+        vertical-align: text-top;
+      }
+    }
+  }
+}
+
+.btn-outline,
+.buttons > .primary {
+  @apply relative;
+  padding: var(--buttons-border-width);
+
+  &::after {
+    @apply content-DEFAULT
+      absolute
+      top-0
+      left-0
+      block
+      h-full
+      w-full
+      border-t-button
+      border-l-button
+      border-b-button
+      border-r-button
+      border-button-fg;
+    border-radius: calc(var(--buttons-radius) + var(--buttons-border-width));
+  }
+}
+
+.btn-shadow {
+  @apply relative;
+
+  &::after {
+    @apply content-DEFAULT
+      block
+      absolute
+      z-0
+      h-full
+      w-full
+      border-[1.5px]
+      border-button-bg
+      rounded-button;
+    background: rgb(var(--button-fg) / var(--buttons-shadow-opacity));
+    left: var(--buttons-shadow-x-offset);
+    top: var(--buttons-shadow-y-offset);
+  }
+}
+
+.shopify-challenge__container .shopify-challenge__button {
+  @apply
+    payment-btn
+    btn-secondary
+    mt-4
+    mx-auto
+    block;
+}

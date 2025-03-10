@@ -1,0 +1,60 @@
+{
+  "sections": {
+    "banner": {
+      "type": "main-collection-hero",
+      "blocks": {
+        "8c7463fe-856f-4e4a-817e-2f55dc90b676": {
+          "type": "title",
+          "settings": {
+            "show_collection_title": true,
+            "title": ""
+          }
+        },
+        "b1ededc3-797a-4c70-a44a-70739fec4022": {
+          "type": "description",
+          "settings": {
+            "show_collection_description": false,
+            "description": "<p>Enable the description or connect a useful metafield to inform customer's about your collections.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "8c7463fe-856f-4e4a-817e-2f55dc90b676",
+        "b1ededc3-797a-4c70-a44a-70739fec4022"
+      ],
+      "settings": {
+        "show_collection_image": true,
+        "height": "h-sm",
+        "color_scheme": "accent-1",
+        "overlay": 60,
+        "content_position": "middle",
+        "content_alignment": "center"
+      }
+    },
+    "product-grid": {
+      "type": "main-collection-product-grid",
+      "settings": {
+        "products_per_page": 16,
+        "columns_desktop": 4,
+        "image_ratio": "square",
+        "card_image_fit": "cover",
+        "show_secondary_image": true,
+        "show_price": true,
+        "show_vendor": false,
+        "show_rating": true,
+        "card_hover_show_info": true,
+        "enable_quick_add": true,
+        "enable_filtering": true,
+        "filter_type": "top",
+        "enable_sorting": true,
+        "columns_mobile": "2",
+        "padding_top": 0,
+        "padding_bottom": 32
+      }
+    }
+  },
+  "order": [
+    "banner",
+    "product-grid"
+  ]
+}

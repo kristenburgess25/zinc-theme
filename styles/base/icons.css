@@ -1,0 +1,30 @@
+.icon {
+  @apply inline-block align-baseline;
+
+  &.target {
+    @apply inline-flex items-center justify-center;
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  & svg {
+    fill-opacity: .25;
+  }
+}
+
+
+.animate-arrow {
+  & .icon-arrow {
+    @apply relative
+      transform
+      transition-all
+      duration-250
+      ease-out;
+  }
+
+  &:hover {
+    & .icon-arrow {
+      @apply translate-x-1;
+    }
+  }
+}

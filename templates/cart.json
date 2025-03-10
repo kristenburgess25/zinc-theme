@@ -1,0 +1,82 @@
+{
+  "sections": {
+    "cart-items": {
+      "type": "main-cart-items",
+      "settings": {
+        "continue_shopping_style": "button",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "cart-footer": {
+      "type": "main-cart-footer",
+      "blocks": {
+        "subtotal": {
+          "type": "subtotal",
+          "settings": {
+          }
+        },
+        "buttons": {
+          "type": "buttons",
+          "settings": {
+          }
+        }
+      },
+      "block_order": [
+        "subtotal",
+        "buttons"
+      ],
+      "settings": {
+        "note_label": "Leave a note with your order",
+        "enable_note": true
+      }
+    },
+    "featured-collection": {
+      "type": "featured-collection",
+      "blocks": {
+        "cadbe34f-ca50-4431-912a-67574442e3e5": {
+          "type": "collection",
+          "settings": {
+            "title": "Featured Collection",
+            "collection": ""
+          }
+        }
+      },
+      "block_order": [
+        "cadbe34f-ca50-4431-912a-67574442e3e5"
+      ],
+      "settings": {
+        "title": "Featured collection",
+        "heading_size": "h2",
+        "description": "",
+        "description_style": "body",
+        "heading_alignment": "center",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "solid",
+        "enable_desktop_slider": false,
+        "color_scheme": "background-1",
+        "use_foreground": true,
+        "card_color_scheme": "default",
+        "image_ratio": "square",
+        "show_secondary_image": false,
+        "show_price": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "card_hover_show_info": false,
+        "enable_quick_add": false,
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    }
+  },
+  "order": [
+    "cart-items",
+    "cart-footer",
+    "featured-collection"
+  ]
+}

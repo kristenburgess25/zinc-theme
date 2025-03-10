@@ -1,0 +1,40 @@
+#testimonials-section {
+  & .content-container {
+    @apply
+      flex;
+  }
+
+  & .multicolumn-card__image-wrapper {
+    @apply relative;
+
+    &.center { @apply self-center; }
+    &.right { @apply self-end; }
+  }
+
+  & .media {
+    @apply w-full;
+  }
+}
+
+.background-blocks {
+  flex-direction: column-reverse;
+
+  & .multicolumn-card__image-wrapper {
+    @apply mx-0;
+    margin-top: -4rem;
+  }
+
+  & .multicolumn-card-spacing {
+    padding-top: 0;
+  }
+
+  & .multicolumn-card__info {
+    padding: 1rem 1rem 4rem;
+    margin: 1rem;
+  }
+
+  & .multicolumn-card__image {
+    height: 100px;
+    width: 100px;
+  }
+}

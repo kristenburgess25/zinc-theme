@@ -1,0 +1,219 @@
+/*
+  [THEME STYLES]
+  Base theme styles, avoid modification without development experience/guide if possible.
+  If you'd like to layer customizations on top of the theme, please see the merchant.css file,
+  found in the assets folder.
+*/
+
+body {
+  @apply font-body;
+}
+
+/* Removed to fix an overflow problem on slideshow, wasn't really needed anyway */
+/* body.search--opened,
+body.menu--opened {
+  @apply fixed overflow-y-auto;
+} */
+
+* {
+  @apply focus:(ring-1 ring-scheme-accent)
+    focus-visible:(ring-1 ring-scheme-accent);
+}
+
+/* Fallback - for browsers that don't support :focus-visible, a fallback is set for :focus */
+.focused,
+.no-js *:focus {
+  @apply focus:(ring-1 ring-scheme-accent);
+}
+
+/* Negate the fallback side-effect for browsers that support :focus-visible */
+.no-js *:focus:not(:focus-visible) {
+  @apply outline-none shadow-none;
+}
+
+.focus-inset {
+  @apply focus-visible:(ring-1 ring-scheme-accent);
+}
+
+.focused.focus-inset,
+.no-js .focus-inset:focus {
+  @apply ring-1 ring-scheme-accent;
+}
+
+.no-js .focus-inset:focus:not(:focus-visible) {
+  @apply outline-none shadow-none;
+}
+
+/* Dangerous for a11y - Use with care */
+.focus-none {
+  @apply outline-none shadow-none ring-0;
+}
+
+.focus-offset:focus-visible {
+  @apply ring-1 ring-scheme-accent;
+}
+
+.focus-offset.focused,
+.no-js .focus-offset:focus {
+  @apply ring-1 ring-scheme-accent;
+}
+
+.no-js .focus-offset:focus:not(:focus-visible) {
+  @apply outline-none shadow-none;
+}
+
+.container {
+  &--expanded {
+    @apply max-w-screen-2xl;
+  }
+
+  &--narrow {
+    @apply max-w-screen-lg;
+  }
+
+  &--tight {
+    @apply max-w-screen-md;
+  }
+
+  &--no-pad {
+    @apply p-0;
+  }
+}
+
+.media {
+  &--auto {
+    @apply aspect-auto h-full;
+
+    & > img {
+      @apply aspect-auto;
+    }
+  }
+
+  &--square, &--circle {
+    @apply aspect-square;
+  }
+
+  &--circle {
+    @apply rounded-full;
+  }
+
+  &--sportrait {
+    aspect-ratio: 2/3;
+  }
+
+  &--lportrait {
+    aspect-ratio: 9/16;
+  }
+
+  &--widescreen {
+    aspect-ratio: 16/9;
+  }
+
+  &--landscape {
+    aspect-ratio: 3/2;
+  }
+}
+
+.collection {
+  &--empty {
+    .title {
+      @apply font-heading;
+    }
+  }
+}
+
+/* Splide */
+.splide {
+  &.is-active:not(.splide--no-padding) {
+    @apply md:(px-16) lg:(px-20);
+  }
+
+  &.is-initialized:not(.is-active),
+  &--disabled {
+    @apply p-[inherit];
+
+    :not(.container) > & {
+      @apply container;
+    }
+
+    & .splide__list {
+      @apply flex flex-wrap justify-center;
+    }
+
+    & .splide__arrows {
+      @apply hidden;
+    }
+  }
+
+  &--no-padding {
+    padding-bottom: 0;
+  }
+
+  &--desktop {
+    & .splide__track--container {
+      @apply md:px-16 lg:px-20;
+    }
+  }
+
+  &:not(.splide--desktop) {
+    & .splide__arrows {
+      .blog & {
+        @apply sm:hidden;
+      }
+    }
+  }
+
+  &--draggable:not(.splide--nav) {
+    @apply
+      pb-4
+      md:pb-[3rem];
+  }
+
+  &__track {
+    @apply z-1;
+    margin: 0 calc(var(--grid-mobile-horizontal-spacing) * -1);
+
+    @media screen and (min-width: 768px) {
+      margin: 0 calc(var(--grid-desktop-horizontal-spacing) * -1);
+    }
+  }
+
+  &__slide {
+    padding: var(--grid-mobile-vertical-spacing) var(--grid-mobile-horizontal-spacing);
+
+    @media screen and (min-width: 768px) {
+      padding: var(--grid-desktop-vertical-spacing) var(--grid-desktop-horizontal-spacing);
+    }
+  }
+
+  &__arrows {
+    @apply relative flex justify-between md:(top-1/2 h-12 absolute transform -translate-y-1/2 w-full left-0);
+  }
+
+  &__arrow {
+    @apply relative h-min w-[unset] rounded-none opacity-100;
+    background-color: transparent;
+
+    > svg {
+      @apply fill-none stroke-scheme-accent h-[unset] w-[unset] <md:(h-12);
+    }
+  }
+
+  &__pagination {
+    @apply m-2
+      bottom-[1.5rem]
+      md:(m-4 -bottom-2);
+  }
+
+  &__pagination__page {
+    @apply bg-scheme-fg opacity-100;
+
+    .section--foreground & {
+      @apply bg-scheme-bg;
+    }
+
+    &.is-active {
+      @apply bg-scheme-accent;
+    }
+  }
+}

@@ -1,0 +1,259 @@
+.slideshow {
+  & .h0 {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 92px;
+    line-height: 85px;
+  }
+
+  & .h1 {
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 54px;
+    letter-spacing: 0;
+  }
+
+  @media screen and (max-width: 767px) {
+    .mobile-text-large {
+      font-size: 4rem;
+    }
+
+    .mobile-text-medium {
+      font-size: 3rem;
+    }
+
+    .mobile-text-small {
+      font-size: 2rem;
+    }
+  }
+
+  & img,
+  & video {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  & .banner {
+    &__media {
+      &::after {
+        @apply bg-scheme-bg;
+      }
+    }
+
+    &--mobile-bottom,
+    &--mobile-bottom:not(.banner--stacked) {
+      @apply <md:(h-[100vh] flex-col);
+
+      & .banner__media {
+        @media screen and (max-width: 767px) {
+          /* @apply max-h-1/2; */
+
+          @apply !h-auto;
+          flex: 1 0 auto;
+        }
+
+        @apply <md:!h-auto;
+      }
+
+      & .banner__content {
+        @media screen and (max-width: 767px) {
+          @apply p-8 !h-auto;
+          /* flex: 1 0 auto; */
+          flex: 1 0 auto;
+          /* display: block; */
+        }
+
+        /* @apply <md:!h-auto; */
+
+        @apply <sm:p-4;
+      }
+
+      & .banner__box {
+        @apply <sm:p-4 <md:p-8;
+      }
+    }
+  }
+
+  &__text-mobile {
+    &--center {
+      & .banner__buttons {
+        @apply <md:justify-center;
+      }
+    }
+
+    &--left {
+      & .banner__buttons {
+        @apply <md:justify-start;
+      }
+    }
+
+    &--right {
+      & .banner__buttons {
+        @apply <md:justify-end;
+      }
+    }
+  }
+
+  &__text {
+    &--center {
+      & .banner__buttons {
+        @apply md:justify-center;
+      }
+    }
+
+    &--left {
+      & .banner__buttons {
+        @apply md:justify-start;
+      }
+    }
+
+    &--right {
+      & .banner__buttons {
+        @apply md:justify-end;
+      }
+    }
+  }
+
+  &__text.banner__box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 54.5rem;
+    position: absolute;
+  }
+
+  & .banner--small {
+    min-height: 575px;
+
+    &:not(.banner--adapt) {
+      min-height: 575px;
+    }
+  }
+
+  &.splide {
+    padding: 0;
+
+    & .splide__track {
+      @apply mx-0;
+    }
+
+    & .splide__slide {
+      padding: 0;
+
+      &__container {
+        @apply h-full;
+      }
+    }
+
+    & .splide__pagination {
+      @apply <md:(relative bottom-0 m-0 p-2) md:bottom-8;
+    }
+
+    & .splide__pagination__page {
+      @apply p-2
+        mx-2
+        w-8;
+      background: none;
+      border-radius: 0;
+      height: unset;
+
+      &::after {
+        @apply block
+          h-1
+          w-full
+          bg-scheme-fg;
+        content: '';
+      }
+    }
+
+    & .splide__pagination__page.is_active {
+      &::after {
+        @apply bg-scheme-accent;
+      }
+    }
+
+    & .splide__arrows {
+      @apply <md:(absolute bottom-1/2 w-full);
+      z-index: 1;
+      height: 0;
+    }
+
+    &.mobile-text-below {
+      & .splide__arrows {
+        @apply <md:bottom-1/4;
+      }
+    }
+  }
+}
+
+.slideshow-video {
+  right: 0;
+  bottom: 0;
+  object-fit: cover;
+}
+
+.no-solid-background {
+  background: none;
+
+  @apply text-base;
+}
+
+.control-container {
+  @apply bg-scheme-bg
+    z-2;
+}
+
+.slideshow__controls {
+  @apply text-scheme-text;
+  position: absolute;
+  z-index: 1;
+  bottom: 10%;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  text-align: center;
+
+  @media screen and (max-width: 767px) {
+    visibility: hidden;
+  }
+
+  &--none {
+    visibility: hidden;
+  }
+
+  &--dots .slider-button {
+    visibility: hidden;
+  }
+
+  & .slider-button {
+    @apply bg-fg
+      h-12
+      w-12;
+    border-radius: 50%;
+  }
+
+  & .slider-button .icon {
+    @apply h-12;
+  }
+
+  & .slider-counter__link--dots .dot {
+    @apply block
+      w-8
+      h-1
+      bg-fg
+      p-0;
+  }
+}
+
+.slider-counter {
+  display: flex;
+  justify-content: center;
+  min-width: .1rem;
+
+  &--arrows {
+    visibility: hidden;
+    min-width: .1rem;
+  }
+}

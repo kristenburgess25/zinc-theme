@@ -1,0 +1,26 @@
+ValidSchema:
+  severity: error
+ValidHTMLTranslation:
+  severity: error
+ConvertIncludeToRender:
+  severity: error
+DeprecateFilter:
+  severity: error
+MissingTemplate:
+  severity: error
+SchemaJsonFormat:
+  severity: error
+SpaceInsideBraces:
+  severity: error
+TemplateLength:
+  max_length: 1200
+UnusedAssign:
+  severity: suggestion
+UnusedSnippet:
+  severity: suggestion
+DefaultLocale:
+  severity: error
+MatchingSchemaTranslations:
+  severity: suggestion
+MatchingTranslations:
+  severity: suggestion

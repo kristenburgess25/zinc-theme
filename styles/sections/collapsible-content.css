@@ -1,0 +1,152 @@
+.collapsible-content__grid .grid__item {
+  @apply
+    m-auto;
+}
+
+.collapsible-content {
+  @apply
+    relative
+    z-0;
+}
+
+.collapsible-section-layout {
+  @apply
+    pb-20
+    pt-20;
+}
+
+@media screen and (min-width: 768px) {
+  .collapsible-section-layout {
+    @apply
+      pb-28
+      pt-28;
+  }
+}
+
+.collapsible-content__media--small {
+  @apply
+    h-xs;
+}
+
+.collapsible-content__media--large {
+  @apply
+    h-2x;
+}
+
+@media screen and (min-width: 768px) {
+  .collapsible-content__media--small {
+    @apply
+      h-lg;
+  }
+
+  .collapsible-content__media--large {
+    @apply
+      h-[69rem];
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .collapsible-content__grid--reverse {
+    @apply
+      flex
+      flex-row-reverse;
+  }
+}
+
+.collapsible-content-wrapper-narrow {
+  @apply
+    m-0 m-auto
+    pr-6
+    pl-6;
+}
+
+.collapsible-content__header {
+  @apply
+    break-words
+    mb-8;
+}
+
+.collapsible-content__heading {
+  @apply
+    mb-2
+    mt-0;
+}
+
+@media screen and (min-width: 768px) {
+  .caption-spaced {
+    @apply
+      mb-12;
+  }
+}
+
+.collapsible-none-layout .accordion + .accordion {
+  @apply
+    border-t-0;
+}
+
+.collapsible-row-layout {
+  & .accordion:not(:first-child):not(.color-scheme--background-1) {
+    @apply
+      mt-4;
+  }
+
+  & .accordion summary {
+    @apply border-t-0;
+  }
+}
+
+.caption-spaced {
+  @apply
+    normal-case
+    text-base;
+}
+
+@media screen and (min-width: 768px) {
+  .collapsible-content .accordion {
+    @apply
+      mt-0;
+  }
+}
+
+.collapsible-row-layout .accordion {
+  border: var(--text-boxes-border-width) solid
+    rgb(var(--color-scheme-fg) var(--text-boxes-border-opacity));
+  margin-bottom: 1.5rem;
+}
+
+.collapsible-row-layout .accordion summary,
+.collapsible-row-layout .accordion .accordion__content {
+  padding: 1.5rem;
+}
+
+.collapsible-row-layout .accordion .accordion__content {
+  padding-top: 0;
+}
+
+.collapsible-content summary:hover {
+  background: rgb(var(--color-scheme-fg) .04);
+}
+
+.collapsible-content summary:hover .accordion__title {
+  text-decoration: underline;
+  text-underline-offset: .3rem;
+}
+
+/* check for flexbox gap in older Safari versions */
+
+@supports not (inset: 10px) {
+  @media screen and (min-width: 768px) {
+    .collapsible-content__grid:not(.collapsible-content__grid--reverse) .grid__item:last-child,
+    .collapsible-content__grid--reverse .collapsible-content__grid-item {
+      padding-left: 5rem;
+      padding-right: 0;
+    }
+  }
+
+  @media screen and (min-width: 1024px) {
+    .collapsible-content__grid:not(.collapsible-content__grid--reverse) .grid__item:last-child,
+    .collapsible-content__grid--reverse .collapsible-content__grid-item {
+      padding-left: 7rem;
+    }
+  }
+}

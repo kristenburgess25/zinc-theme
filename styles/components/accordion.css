@@ -1,0 +1,89 @@
+.accordion {
+  margin-top: 2.5rem;
+  margin-bottom: 0;
+  border-top: .1rem solid rgb(var(--color-scheme-fg) .08);
+  border-bottom: .1rem solid rgb(var(--color-scheme-fg) .08);
+
+  &__title {
+    max-width: calc(100% - 6rem);
+
+    @apply
+      inline-block
+      my-0
+      mx-auto
+      break-words;
+  }
+
+  & summary {
+    @apply
+      leading-none
+      flex
+      p-4
+      relative
+      border-t-2
+      border-scheme-fg;
+
+    & .icon-caret {
+      @apply
+        transition
+        duration-300;
+      position: relative;
+      right: 0;
+      top: 0;
+      height: var(--icon-size);
+      width: var(--icon-size);
+    }
+  }
+
+  & details[open] > summary .icon-caret {
+    @apply
+      transform
+      rotate-180;
+  }
+
+  & .icon-accordion {
+    align-self: center;
+    fill: rgb(var(--color-scheme-accent));
+    height: calc(var(--icon-size) * 1.25);
+    margin-right: var(--icon-size);
+    width: calc(var(--icon-size) * 1.25);
+
+    > path {
+      @apply fill-scheme-accent;
+    }
+  }
+
+  &:not(.product__accordion) {
+    & .icon-accordion,
+    & .icon-caret {
+      height: calc(var(--icon-size) * 1.5);
+      width: calc(var(--icon-size) * 1.5);
+    }
+  }
+
+  & .summary__title {
+    @apply
+      flex
+      flex-1
+      items-center;
+  }
+
+  &__content {
+    @apply
+      mb-6
+      break-words
+      overflow-x-auto
+      py-4
+      px-20;
+
+    & img {
+      @apply
+        max-w-full;
+    }
+  }
+
+  & + .accordion {
+    @apply mt-0
+      border-t-0;
+  }
+}

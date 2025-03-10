@@ -1,0 +1,463 @@
+{{ 'et_contact-content.css' | asset_url | stylesheet_tag }}
+<link rel="stylesheet" href="{{ 'component-slider.css' | asset_url }}" media="print" onload="this.media='all'">
+<noscript>{{ 'component-slider.css' | asset_url | stylesheet_tag }}</noscript>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 768px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+      padding-left: {{ section.settings.padding_left_right }}px;
+      padding-right: {{ section.settings.padding_left_right }}px;
+    }
+  }
+
+  .section-{{ section.id }}-padding .contact-content-list__item {
+    padding: {{ section.settings.padding_column }}px;
+  }
+{%- endstyle -%}
+
+<div class="contact-content contact-content color-scheme color-scheme--{{ section.settings.color_scheme }}{% unless section.settings.background_style == 'none' and settings.text_boxes_border_thickness > 0 or settings.text_boxes_shadow_opacity > 0 %} background-{{ section.settings.background_style }}{% endunless %}{% if section.settings.title == blank %} no-heading{% endif %}">
+  <div class="container section-{{ section.id }}-padding isolate">
+    {%- unless section.settings.title == blank -%}
+      <div class="title-wrapper-with-link title-wrapper--self-padded-mobile title-wrapper--no-top-margin">
+        <h2 class="title {{ section.settings.heading_size }}">
+          {{ section.settings.title | escape }}
+        </h2>
+      </div>
+    {%- endunless -%}
+      <ul class="contact-content-list contains-content-container grid"
+        id="Slider-{{ section.id }}"
+        role="list"
+      >
+        {%- liquid
+          assign highest_ratio = 0
+          for block in section.blocks
+            if block.settings.image.aspect_ratio > highest_ratio
+              assign highest_ratio = block.settings.image.aspect_ratio
+            endif
+          endfor
+        -%}
+        {%- for block in section.blocks -%}
+          {%- assign empty_column = '' -%}
+          {%- if block.settings.image == blank and block.settings.title == blank and block.settings.text == blank and block.settings.link_label == blank -%}
+            {%- assign empty_column = ' contact-content-list__item--empty' -%} 
+          {%- endif -%}
+
+          <li id="Slide-{{ section.id }}-{{ forloop.index }}" class="contact-content-list__item grid__item {{ section.settings.column_alignment }} {{ empty_column }}" {{ block.shopify_attributes }}>            
+            <div class="contact-content-card content-container {{ block.settings.column_orientation }}" style="background-color: {{ block.settings.column_background_color }}; color: {{ block.settings.column_font_color }};">
+              {%- if block.settings.image != blank -%}
+                {% if section.settings.image_ratio == 'auto' or section.settings.image_ratio == 'circle' %}
+                  {% assign spaced_image = true %}
+                {% endif %}
+                <div class="contact-content-card__image-wrapper contact-content-card__image-wrapper--{{ section.settings.image_width }}-width{% if section.settings.image_width != 'full' or spaced_image %} contact-content-card-spacing{% endif %}" style="padding: {{ block.settings.image-padding }}px;">
+                  <div class="media media--transparent media--{{ section.settings.image_ratio }}"
+                    {% if section.settings.image_ratio == 'auto' %}
+                      style="padding-bottom: {{ 1 | divided_by: highest_ratio | times: 100 }}%;"
+                    {% endif %}>
+                    <img
+                      class="contact-content-card__image"
+                      srcset="{%- if block.settings.image.width >= 275 -%}{{ block.settings.image | image_url: width: 275 }} 275w,{%- endif -%}
+                        {%- if block.settings.image.width >= 550 -%}{{ block.settings.image | image_url: width: 550 }} 550w,{%- endif -%}
+                        {%- if block.settings.image.width >= 710 -%}{{ block.settings.image | image_url: width: 710 }} 710w,{%- endif -%}
+                        {%- if block.settings.image.width >= 1420 -%}{{ block.settings.image | image_url: width: 1420 }} 1420w,{%- endif -%}
+                        {{ block.settings.image | image_url }} {{ block.settings.image.width }}w"
+                      src="{{ block.settings.image | image_url: width: 550 }}"
+                      sizes="(min-width: 1024px) {% if section.blocks.size <= 2 %}710px{% else %}550px{% endif %},
+                        (min-width: 768px) {% if section.blocks.size == 1 %}710px{% else %}550px{% endif %},
+                        calc(100vw - 30px)"
+                      alt="{{ block.settings.image.alt }}"
+                      height="{{ block.settings.image.height }}"
+                      width="{{ block.settings.image.width }}"
+                      loading="lazy"
+                    >
+                  </div>
+                </div>
+              {%- else -%}
+                {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+              {%- endif -%}
+            <div class="contact-content-card__info" style="padding: {{ block.settings.text-padding }}px;">
+                {%- if block.settings.title != blank -%}
+                  <h3 class="{{ block.settings.heading_text_style }}"
+                  >
+                  {{ block.settings.title | escape }}</h3>
+                {%- endif -%}
+                {%- if block.settings.text != blank -%}
+                  <div class="rte">{{ block.settings.text }}</div>
+                {%- endif -%}
+
+                <div class="contact-info">
+                  {%- if block.settings.title-2 != blank -%}
+                    <h3 class="{{ block.settings.heading_text_style }}">{{ block.settings.title-2 | escape }}</h3>
+                  {%- endif -%}
+                  {%- if block.settings.text-2 != blank -%}
+                    <div class="rte {{ block.settings.content_text_size }}">{{ block.settings.text-2 }}</div>
+                  {%- endif -%}
+
+                  {%- if block.settings.title-3 != blank -%}
+                    <h3 class="{{ block.settings.heading_text_style }}">{{ block.settings.title-3 | escape }}</h3>
+                  {%- endif -%}
+                  {%- if block.settings.text-3 != blank -%}
+                    <div class="rte {{ block.settings.content_text_size }}">{{ block.settings.text-3 }}</div>
+                  {%- endif -%}
+
+                  {%- if block.settings.title-4 != blank -%}
+                    <h3 class="{{ block.settings.heading_text_style }}"> {{ block.settings.title-4 | escape }}</h3>
+                  {%- endif -%}
+                  {%- if block.settings.text-4 != blank -%}
+                    <div class="rte {{ block.settings.content_text_size }}">{{ block.settings.text-4 }}</div>
+                  {%- endif -%}
+                </div>
+
+                {%- if block.settings.link_label != blank -%}
+                  <a class="link btn contact-content-btn" {% if block.settings.link == blank %}role="link" aria-disabled="true"{% else %}href="{{ block.settings.link }}"{% endif %}>{{ block.settings.link_label | escape }}</a>
+                {%- endif -%}
+              </div>
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Contact Content",
+  "class": "section",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Contact Content"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h3",
+          "label": "t:sections.all.heading_size.options__1.label"
+        },
+        {
+          "value": "h2",
+          "label": "t:sections.all.heading_size.options__2.label"
+        },
+        {
+          "value": "h1",
+          "label": "t:sections.all.heading_size.options__3.label"
+        }
+      ],
+      "default": "h1",
+      "label": "t:sections.all.heading_size.label"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "options": [
+        {
+          "value": "auto",
+          "label": "t:settings_schema.global.settings.aspect_ratio.options__1.label"
+        },
+        {
+          "value": "square",
+          "label": "t:settings_schema.global.settings.aspect_ratio.options__2.label"
+        },
+        {
+          "value": "lportrait",
+          "label": "t:settings_schema.global.settings.aspect_ratio.options__3.label"
+        },
+        {
+          "value": "sportrait",
+          "label": "t:settings_schema.global.settings.aspect_ratio.options__4.label"
+        },
+        {
+          "value": "widescreen",
+          "label": "t:settings_schema.global.settings.aspect_ratio.options__5.label"
+        },
+        {
+          "value": "landscape",
+          "label": "t:settings_schema.global.settings.aspect_ratio.options__6.label"
+        },
+        {
+          "value": "circle",
+          "label": "t:settings_schema.global.settings.aspect_ratio.options__7.label"
+        }
+      ],
+      "default": "auto",
+      "label": "Image aspect ratio"
+    },
+    {
+      "type": "select",
+      "id": "column_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.multicolumn.settings.column_alignment.options__1.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.multicolumn.settings.column_alignment.options__2.label"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left",
+      "label": "t:sections.multicolumn.settings.column_alignment.label"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "default": "Button label",
+      "label": "t:sections.multicolumn.settings.button_label.label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "t:sections.multicolumn.settings.button_link.label"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "options": [
+        {
+          "value": "background-1",
+          "label": "t:sections.all.colors.background_1.label"
+        },
+        {
+          "value": "background-2",
+          "label": "t:sections.all.colors.background_2.label"
+        },
+        {
+          "value": "accent-1",
+          "label": "t:sections.all.colors.accent_1.label"
+        },
+        {
+          "value": "accent-2",
+          "label": "t:sections.all.colors.accent_2.label"
+        }
+      ],
+      "default": "background-1",
+      "label": "t:sections.all.colors.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_column",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "Column padding",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "padding_left_right",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "label": "Left/Right padding",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ],
+  "max_blocks": 2,
+  "blocks": [
+    {
+      "type": "column",
+      "name": "t:sections.multicolumn.blocks.column.name",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.multicolumn.blocks.column.settings.image.label"
+        },
+        {
+          "type": "range",
+          "id": "image-padding",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "px",
+          "label": "Image padding",
+          "default": 0
+        },
+        {
+          "type": "range",
+          "id": "text-padding",
+          "min": 0,
+          "max": 100,
+          "step": 1,
+          "unit": "px",
+          "label": "Text padding",
+          "default": 35
+        },
+        {
+          "type": "color",
+          "id": "column_background_color",
+          "label": "Block background color",
+          "default": "#FFFFFF"
+        },
+        {
+          "type": "color",
+          "id": "column_font_color",
+          "label": "Block font color",
+          "default": "#000000"
+        },
+        {
+          "type": "select",
+          "id": "column_orientation",
+          "options": [
+            {
+              "value": "text-below",
+              "label": "Image above text"
+            },
+            {
+              "value": "text-above",
+              "label": "Image below text"
+            }
+          ],
+          "default": "text-above",
+          "label": "Column content orientation"
+        },
+        {
+          "type": "select",
+          "id": "heading_text_style",
+          "options": [
+            {
+              "value": "subtitle",
+              "label": "Subtitle"
+            },
+            {
+              "value": "uppercase",
+              "label": "Uppercase"
+            }
+          ],
+          "default": "uppercase",
+          "label": "Heading text style"
+        },
+        {
+          "type": "select",
+          "id": "content_text_size",
+          "options": [
+            {
+              "value": "h3",
+              "label": "Large"
+            },
+            {
+              "value": "h4",
+              "label": "Medium"
+            },
+            {
+              "value": "h5",
+              "label": "Small"
+            }
+          ],
+          "default": "h4",
+          "label": "Text content size"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "default": "Contact Content",
+          "label": "Heading 1"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "default": "<p>Provide useful content and information that can further assist customers in contacting you or learning more about your brand. </p>",
+          "label": "Text 1"
+        },
+        {
+          "type": "text",
+          "id": "title-2",
+          "default": "E-mail",
+          "label": "Heading 2"
+        },
+        {
+          "type": "text",
+          "id": "text-2",
+          "default": "info@loremipsum.com",
+          "label": "Text 2"
+        },
+        {
+          "type": "text",
+          "id": "title-3",
+          "default": "Phone",
+          "label": "Heading 3"
+        },
+        {
+          "type": "text",
+          "id": "text-3",
+          "default": "+1 555 505 5050",
+          "label": "Text 3"
+        },
+        {
+          "type": "text",
+          "id": "title-4",
+          "default": "Address",
+          "label": "Heading 4"
+        },
+        {
+          "type": "text",
+          "id": "text-4",
+          "default": "725 55th Street, New York, NY, 55555",
+          "label": "Text 4"
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "t:sections.multicolumn.blocks.column.settings.link_label.label"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "t:sections.multicolumn.blocks.column.settings.link.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact Content",
+      "blocks": [
+        {
+          "type": "column"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

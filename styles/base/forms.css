@@ -1,0 +1,113 @@
+.field {
+  &__input {
+    @apply h-12 bg-fg cursor-pointer py-2 px-4 text-base;
+
+    &:focus,
+    &:not(:placeholder-shown) {
+      @apply pt-4 pb-0 px-4;
+
+      ~ .field__label {
+        @apply text-xs -top-[.75rem] left-4;
+      }
+    }
+  }
+
+  &__label {
+    @apply text-base leading-12 left-4;
+  }
+
+  &__button {
+    &.search__button {
+      @apply h-full;
+    }
+  }
+}
+
+.select,
+.localization-form {
+  @apply
+    relative
+    flex;
+
+  &__select {
+    @apply
+      h-10
+      border
+      border-scheme-accent
+      cursor-pointer
+      leading-4
+      py-2
+      pl-4
+      pr-8;
+  }
+
+  & .icon-caret {
+    @apply
+      h-6
+      w-6
+      right-2
+      top-1/2
+      transform
+      -translate-y-1/2;
+  }
+}
+
+.disclosure {
+  @apply
+    relative;
+
+  &__button {
+    @apply
+      relative
+      p-2
+      pr-8
+      my-2;
+
+    &[aria-expanded='true'] {
+      & .icon-caret {
+        @apply
+          transform
+          -translate-y-1/2
+          rotate-180;
+      }
+    }
+  }
+
+  & .icon-caret {
+    @apply absolute;
+  }
+
+  &__list-wrapper {
+    @apply
+      absolute
+      bottom-full
+      right-0
+      max-h-48
+      w-64
+      filter
+      drop-shadow-md
+      overflow-y-auto
+      bg-scheme-bg
+      z-1;
+  }
+
+  & #FooterCountryButton {
+    & + .disclosure__list-wrapper {
+      @apply left-0
+        right-[unset];
+    }
+  }
+
+  &__list {
+    @apply px-4
+      bg-scheme-fg;
+  }
+
+  &__item {
+    @apply py-1;
+  }
+
+  &__link {
+    @apply p-0;
+  }
+}

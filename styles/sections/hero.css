@@ -1,0 +1,78 @@
+.hero {
+  @apply relative bg-scheme-bg text-scheme-text;
+
+  &__inner {
+    @apply <lg:h-auto;
+
+    .hero:not(.has-overlay) & {
+      @apply lg:(flex flex-col);
+    }
+  }
+
+
+  &__image-wrapper {
+    .has-overlay & {
+      @apply lg:h-full;
+    }
+
+    .hero:not(.has-overlay) & {
+      @apply lg:(h-0 flex-grow);
+    }
+  }
+
+  &__image {
+    @apply h-full w-full object-cover;
+  }
+
+  &__text-wrapper {
+    .has-overlay & {
+      @apply w-full h-full lg:(absolute top-0 left-0);
+
+      &::before {
+        @apply lg:(absolute top-0 left-0 w-full h-full bg-scheme-bg z-0);
+        content: '';
+        opacity: var(--hero-overlay-opacity);
+      }
+    }
+
+    .hero:not(.has-overlay) & {
+      @apply lg:(h-auto);
+    }
+
+    .hero:not(.has-image) & {
+      @apply lg:(h-full);
+    }
+  }
+
+  &__text {
+    @apply container py-4 lg:py-8 h-full flex flex-col justify-start;
+
+    .has-overlay & {
+      @apply lg:(relative z-1 py-8 lg:py-12);
+    }
+
+    &.middle {
+      @apply justify-center;
+    }
+
+    &.bottom {
+      @apply justify-end;
+    }
+
+    > *:last-child {
+      @apply mb-0 pb-0;
+    }
+  }
+
+  &__title,
+  &__subtitle {
+    @apply my-2 text-scheme-text;
+  }
+
+  &__details {
+    & > span:not(:last-child)::after {
+      @apply inline-block mx-2 text-lg font-bold align-sub opacity-25;
+      content: '/';
+    }
+  }
+}

@@ -1,0 +1,649 @@
+{% style %}
+.header {
+  padding-top: {{ section.settings.padding_top }}px;
+}
+.top-link > a,
+.header__menu-trigger,
+.header__icon-link,
+.header__logo {
+  padding-bottom: {{ section.settings.padding_bottom }}px;
+}
+{% endstyle %}
+{%- if settings.cart_type == "drawer" -%}
+  {{ 'component-cart-drawer.css' | asset_url | stylesheet_tag }}
+  {{ 'component-cart.css' | asset_url | stylesheet_tag }}
+  {{ 'component-totals.css' | asset_url | stylesheet_tag }}
+  {{ 'component-price.css' | asset_url | stylesheet_tag }}
+  {{ 'component-discounts.css' | asset_url | stylesheet_tag }}
+  {{ 'component-loading-overlay.css' | asset_url | stylesheet_tag }}
+
+  {{ 'et_cart-drawer.css' | asset_url | stylesheet_tag }}
+  {{ 'et_cart.css' | asset_url | stylesheet_tag }}
+  {{ 'et_price.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+
+<script src="{{ 'cart-notification.js' | asset_url }}" defer="defer"></script>
+{%- if settings.cart_type == "drawer" -%}
+  <script src="{{ 'cart-drawer.js' | asset_url }}" defer="defer"></script>
+{%- endif -%}
+
+<header id="header" class="header {{ section.settings.color_scheme }} color-scheme--{{ section.settings.color_scheme }} logo-{{ section.settings.logo_position }}{% if section.settings.enable_sticky_header %} sticky{% endif %}">
+  {% comment %} logo {% endcomment %}
+  <h1 class="header__logo order-none">
+    <a href="{{ routes.root_url }}">
+      {%- if section.settings.logo != blank -%}
+        {%- assign logo_alt = section.settings.logo.alt | default: shop.name | escape -%}
+        {%- assign logo_height = section.settings.logo_width | divided_by: section.settings.logo.aspect_ratio -%}
+        {{ section.settings.logo | image_url: width: section.settings.width | image_tag:
+          class: 'logo__image',
+          widths: '50, 100, 150, 200, 250, 300, 400, 500',
+          height: logo_height,
+          width: section.settings.logo_width,
+          alt: logo_alt
+        }}
+      {%- else -%}
+        <span class="logo__fallback">{{ shop.name }}</span>
+      {%- endif -%}
+    </a>
+  </h1>
+
+  {% comment %} theme-check-disable LiquidTag {% endcomment %}
+  {%- capture topmenuJson -%}
+    {%- render 'menu-json', menu: section.settings.menu -%}
+  {%- endcapture -%}
+
+  {%- capture mobileLinksJson -%}
+    {%- if section.settings.mm_mobile_links -%}
+      {%- render 'menu-json', menu: section.settings.mm_mobile_links -%}
+    {%- else -%}
+      null
+    {%- endif -%}
+  {%- endcapture -%}
+  {% comment %} theme-check-enable LiquidTag {% endcomment %}
+
+  {% capture blocks %}
+    [
+      {% for block in section.blocks %}
+        {
+          "id": "{{ block.id }}",
+          "settings": {% if block.type == 'menu' %}
+            {
+              "submenu": {%- if block.settings.submenu -%}{% render 'menu-json', menu: block.settings.submenu %}{%- else -%}null{%- endif -%},
+              "submenu_title": "{{ block.settings.submenu_title }}",
+              "submenu_item_image": "{{ block.settings.submenu_item_image }}",
+              "title": "{{ block.settings.title | handleize }}" 
+            }
+          {% else %}
+            {
+              "content": "{{ block.settings.content }}",
+              "content_title": "{{ block.settings.content_title }}",
+              "content_title_size": "{{ block.settings.content_title_size }}",
+              "content_subtitle": "{{ block.settings.content_subtitle }}",
+              "content_subtitle_size": "{{ block.settings.content_subtitle_size }}",
+              {%- if block.settings.image -%}
+                "image": {
+                  "alt": "{{ block.settings.image.alt }}",
+                  "aspect_ratio": {{ block.settings.image.aspect_ratio }},
+                  "height": "{{ block.settings.image.height }}",
+                  "id": {{ block.settings.image.id }},
+                  "url": "{{ block.settings.image | image_url }}",
+                  "width": "{{ block.settings.image.width }}"
+                },
+              {%- endif -%}
+              "button_style": "{{ block.settings.button_style }}",
+              "button_reverse": {{ block.settings.button_reverse }},
+              "primary_button_label": "{{ block.settings.primary_button_label }}",
+              "primary_button_url": "{{ block.settings.primary_button_url }}",
+              "secondary_button_label": "{{ block.settings.secondary_button_label }}",
+              "secondary_button_url": "{{ block.settings.secondary_button_url }}",
+              "title": "{{ block.settings.title }}"
+            }
+          {% endif %},
+          "shopify_attributes": {{ block.shopify_attributes | json }},
+          "type": "{{ block.type }}"
+        }{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    ]
+  {% endcapture %}
+
+  {% comment %} menu {% endcomment %}
+  {% if section.settings.menu %}
+    {%- assign app_type = 'megamenu' -%}
+    <div class="header__menu order-1"
+      data-app-type="{{ app_type }}"
+      data-app-id="{{ section.id }}">
+      <script id="{{ section.id }}-{{ app_type }}">
+        window.vue.availableApps.push({
+          type: "{{ app_type }}",
+          id: "{{ section.id }}",
+          data: {
+            "iconSize": {{ settings.icon_size }},
+            "iconStrokeWidth": {{ settings.icon_stroke_width }},
+            "settings": {{ section.settings | json }},
+            "blocks": {{ blocks }},
+            "topMenu": {{ topmenuJson }},
+            "mobileLinks": {{ mobileLinksJson }},
+            "accountRoute": "{{ routes.account_url }}"
+          }
+        })
+      </script>
+    </div>
+  {% endif %}
+
+  {% comment %} user menu {% endcomment %}
+  <div class="header__user-menu order-2 {{ section.settings.user_menu_type }} icons-{{ section.settings.menu_icon_position }}">
+    {%- capture trendsJson -%}
+      {%- if settings.search_trends != nil -%}
+        {
+          "handle": "{{ settings.search_trends.handle }}",
+          "title": "{{ settings.search_trends.title }}",
+          "links": {%- render 'menu-json', menu: settings.search_trends -%}
+        }
+      {%- else -%}
+        null
+      {%- endif -%}
+    {%- endcapture -%}
+    
+    {% comment %} search {% endcomment %}
+    {%- assign app_type = 'search' -%}
+    <div id="searchMenuTop"
+      data-app-type="{{ app_type }}"
+      data-app-id="{{ section.id }}">
+      <script id="{{ section.id }}-{{ app_type }}">
+        window.vue.availableApps.push({
+          type: "{{ app_type }}",
+          id: "{{ section.id }}",
+          data: {
+            "iconSize": {{ settings.icon_size }},
+            "iconStrokeWidth": {{ settings.icon_stroke_width }},
+            "searchPosition": "{{ settings.search_open_position }}",
+            "predictiveSearchEnabled": {{ settings.predictive_search_enabled }},
+            "predictiveShowPages": {{ settings.predictive_search_show_pages }},
+            "predictiveShowArticles": {{ settings.predictive_search_show_articles }},
+            "trendingSearches": {{ trendsJson }},
+            "cardColorScheme": "{{ settings.card_color_scheme }}",
+            "cardBorder": {{ settings.card_border }},
+            "cardImageAspect": "{{ settings.predictive_card_image_ratio }}",
+            "cardImageFit": "{{ settings.card_image_fit }}",
+            "cardAnimate": {{ settings.product_card_hover_animate }},
+            "cardAnimation": "{{ settings.product_card_hover_animation }}",
+            "cardShowVendor": {{ settings.predictive_card_show_vendor }},
+            "cardShowPrice": {{ settings.predictive_card_show_price }},
+            "cardShowAuthor": {{ settings.predictive_card_show_author }},
+            "cardShowDate": {{ settings.predictive_card_show_date }},
+            "cardShowTags": {{ settings.predictive_card_show_tags }},
+            "badgePosition": "{{ settings.badge_position }}",
+            "soldOutColor": "{{ settings.sold_out_badge_color_scheme }}",
+            "saleColor": "{{ settings.sale_badge_color_scheme }}",
+            "currencyCodeEnabled": {{ settings.currency_code_enabled }}
+          }
+        })
+      </script>
+    </div>
+
+    {% comment %} user {% endcomment %}
+    <a class="header__icon-link account-link" href="{{ routes.account_url }}">
+      <span class="icon target">
+        {% render 'icon-user' %}
+      </span>
+     <span class="label">Account</span>
+    </a>
+    {% comment %} cart {% endcomment %}
+    <a class="header__icon-link cart-link" href="{{ routes.cart_url }}" id="cart-icon-bubble">
+      <span class="icon target">
+        {% render 'icon-shopping-bag' %}
+
+        {%- if cart != empty and section.settings.user_menu_type != 'compact' -%}
+          <div class="cart-link__bubble">
+            {%- if cart.item_count < 100 -%}
+              <span aria-hidden="true">{{ cart.item_count }}</span>
+            {%- endif -%}
+            <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
+          </div>
+        {%- endif -%}
+      </span>
+      <span class="label">Cart</span>
+      {%- if cart != empty and section.settings.user_menu_type == 'compact' -%}
+        <span class="cart-link__bubble">
+          {%- if cart.item_count < 100 -%}
+            <span aria-hidden="true">{{ cart.item_count }}</span>
+          {%- endif -%}
+          <span class="visually-hidden">{{ 'sections.header.cart_count' | t: count: cart.item_count }}</span>
+        </span>
+      {%- endif -%}
+    </a>
+  </div>
+</header>
+
+{%- if settings.cart_type == "notification" -%}
+  {%- render 'cart-notification', color_scheme: section.settings.color_scheme -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.header.name",
+  "class": "section-header",
+  "settings": [
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "options": [
+        {
+          "value": "background-1",
+          "label": "Background 1"
+        },
+        {
+          "value": "background-2",
+          "label": "Background 2"
+        },
+        {
+          "value": "accent-1",
+          "label": "Accent 1"
+        },
+        {
+          "value": "accent-2",
+          "label": "Accent 2"
+        }
+      ],
+      "default": "background-1",
+      "label": "t:sections.all.colors.label"
+    },
+    {
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "t:sections.header.settings.logo.label"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 48,
+      "max": 200,
+      "step": 8,
+      "default": 64,
+      "unit": "t:sections.header.settings.logo_width.unit",
+      "label": "t:sections.header.settings.logo_width.label"
+    },
+    {
+      "type": "select",
+      "id": "logo_position",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.header.settings.logo_position.options__1.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.header.settings.logo_position.options__2.label"
+        },
+        {
+          "value": "split-menu",
+          "label": "t:sections.header.settings.logo_position.options__3.label"
+        },
+        {
+          "value": "top-left",
+          "label": "t:sections.header.settings.logo_position.options__4.label"
+        },
+        {
+          "value": "top-right",
+          "label": "t:sections.header.settings.logo_position.options__5.label"
+        },
+        {
+          "value": "top-center",
+          "label": "t:sections.header.settings.logo_position.options__6.label"
+        }
+      ],
+      "default": "split-menu",
+      "label": "t:sections.header.settings.logo_position.label",
+      "info": "t:sections.header.settings.logo_position.info"
+    },
+    {
+      "type": "header",
+      "content": "Menu"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "default": "main-menu",
+      "label": "t:sections.header.settings.menu.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "collapse_menu_desktop",
+      "default": false,
+      "label": "t:sections.header.settings.collapse_menu_desktop.label",
+      "info": "t:sections.header.settings.collapse_menu_desktop.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sticky_header",
+      "default": true,
+      "label": "t:sections.header.settings.enable_sticky_header.label",
+      "info": "t:sections.header.settings.enable_sticky_header.info"
+    },
+    {
+      "type": "header",
+      "content": "Mega Menu"
+    },
+    {
+      "type": "select",
+      "id": "mm_color_scheme",
+      "options": [
+        {
+          "value": "background-1",
+          "label": "Background 1"
+        },
+        {
+          "value": "background-2",
+          "label": "Background 2"
+        },
+        {
+          "value": "accent-1",
+          "label": "Accent 1"
+        },
+        {
+          "value": "accent-2",
+          "label": "Accent 2"
+        }
+      ],
+      "default": "background-1",
+      "label": "t:sections.all.colors.label"
+    },
+    {
+      "type": "select",
+      "id": "mm_type",
+      "options": [
+        {
+          "value": "basic",
+          "label": "Basic"
+        },
+        {
+          "value": "bold",
+          "label": "Bold"
+        }
+      ],
+      "default": "bold",
+      "label": "Menu Type",
+      "info": "The bold menu option offers a bigger, more pronounced experience in the secondary menu. For more details on the differences, please [visit our documentation](https://www.elementumtech.io/)."
+    },
+    {
+      "type": "select",
+      "id": "mm_toplink_behavior",
+      "options": [
+        {
+          "value": "view_all_link",
+          "label": "Include \"View all\" link in submenu"
+        },
+        {
+          "value": "parent_link",
+          "label": "Link directly in topmenu"
+        }
+      ],
+      "default": "parent_link",
+      "label": "Toplink Behavior"
+    },
+    {
+      "type": "checkbox",
+      "id": "mm_enable_caret",
+      "default": false,
+      "label": "Enable caret"
+    },
+    {
+      "type": "link_list",
+      "id": "mm_mobile_links",
+      "label": "Mobile Bottom Links",
+      "info": "Use this setting to provide some additional links in the mobile menu."
+    },
+    {
+      "type": "header",
+      "content": "User Menu"
+    },
+    {
+      "type": "select",
+      "id": "user_menu_type",
+      "options": [
+        {
+          "value": "minimal",
+          "label": "t:sections.header.settings.user_menu_type.options__1.label"
+        },
+        {
+          "value": "compact",
+          "label": "t:sections.header.settings.user_menu_type.options__2.label"
+        },
+        {
+          "value": "expanded",
+          "label": "t:sections.header.settings.user_menu_type.options__3.label"
+        }
+      ],
+      "default": "minimal",
+      "label": "t:sections.header.settings.user_menu_type.label",
+      "info": "t:sections.header.settings.user_menu_type.info"
+    },
+    {
+      "type": "select",
+      "id": "menu_icon_position",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.header.settings.menu_icon_position.options__1.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.header.settings.menu_icon_position.options__2.label"
+        },
+        {
+          "value": "top",
+          "label": "t:sections.header.settings.menu_icon_position.options__3.label"
+        }
+      ],
+      "default": "left",
+      "label": "t:sections.header.settings.menu_icon_position.label",
+      "info": "t:sections.header.settings.menu_icon_position.info"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 36,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 36,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 20
+    }
+  ],
+  "max_blocks": 6,
+  "blocks": [
+    {
+      "name": "Menu",
+      "type": "menu",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Top menu parent",
+          "info": "Your megamenu populates with this setting by attaching the secondary menu to it's parent in the main menu via title/handle. For more information, please [visit our documentation](https://www.elementumtech.io/)."
+        },
+        {
+          "type": "text",
+          "id": "submenu_title",
+          "label": "Submenu heading",
+          "info": "If left blank, the navigation's default title will populate."
+        },
+        {
+          "type": "link_list",
+          "id": "submenu",
+          "label": "Submenu"
+        },
+        {
+          "type": "select",
+          "id": "submenu_item_image",
+          "label": "Thumbnail positions",
+          "options": [
+            {
+              "value": "top",
+              "label": "Top"
+            },
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            },
+            {
+              "value": "none",
+              "label": "None"
+            }
+          ],
+          "default": "none"
+        }
+      ]
+    },
+    {
+      "name": "Image/Content",
+      "type": "image_content",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Top menu parent",
+          "info": "Your megamenu is built according to block order and this setting, which attaches the submenu to it's parent in the top menu. For more details on how to use this megamenu, please [eventually click here](https://google.com)."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "content_title",
+          "label": "Heading",
+          "default": "Product Highlight"
+        },
+        {
+          "type": "select",
+          "id": "content_title_size",
+          "options": [
+            {
+              "value": "h3",
+              "label": "Small"
+            },
+            {
+              "value": "h2",
+              "label": "Medium"
+            },
+            {
+              "value": "h1",
+              "label": "Large"
+            }
+          ],
+          "default": "h2",
+          "label": "Heading Size"
+        },
+        {
+          "type": "text",
+          "id": "content_subtitle",
+          "label": "Subheading",
+          "default": "Use text and image to highlight new product or news"
+        },
+        {
+          "type": "select",
+          "id": "content_subtitle_size",
+          "options": [
+            {
+              "value": "h5",
+              "label": "Small"
+            },
+            {
+              "value": "h4",
+              "label": "Medium"
+            },
+            {
+              "value": "h3",
+              "label": "Large"
+            }
+          ],
+          "default": "h4",
+          "label": "Subheading Size"
+        },
+        {
+          "type": "text",
+          "id": "content",
+          "label": "Content",
+          "default": "Optional descriptive text"
+        },
+        {
+          "type": "header",
+          "content": "Buttons"
+        },
+        {
+          "type": "select",
+          "id": "button_style",
+          "options": [
+            {
+              "value": "flat",
+              "label": "Flat"
+            },
+            {
+              "value": "outline",
+              "label": "Outline"
+            },
+            {
+              "value": "shadow",
+              "label": "Shadow"
+            }
+          ],
+          "label": "Style",
+          "default": "outline"
+        },
+        {
+          "type": "checkbox",
+          "id": "button_reverse",
+          "label": "Reverse button order",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "primary_button_label",
+          "label": "Primary button label",
+          "default": "Primary button"
+        },
+        {
+          "type": "url",
+          "id": "primary_button_url",
+          "label": "Primary button link"
+        },
+        {
+          "type": "text",
+          "id": "secondary_button_label",
+          "label": "Secondary button label",
+          "default": "Secondary button"
+        },
+        {
+          "type": "url",
+          "id": "secondary_button_url",
+          "label": "Secondary button link"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
